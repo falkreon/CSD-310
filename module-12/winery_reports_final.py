@@ -10,6 +10,8 @@
 import mysql.connector # to connect
 from mysql.connector import errorcode
 
+from datetime import date
+
 import dotenv # to use .env file
 from dotenv import dotenv_values
 
@@ -109,6 +111,11 @@ def print_table_ordered(table, headings):
 
         priorHeader = curHeader
 
+def current_quarter():
+    today = date.today()
+    quarter = (today.month-1)//3 + 1
+    return 'Q' + str(quarter) + ' ' + str(today.year)
+
 
 ## Main program ##
 try:
@@ -118,8 +125,8 @@ try:
     # instead of numbered tuples
     cursor = db.cursor( buffered=True, dictionary=True )
 
-    print("Quarterly Hours by Employee")
-    print("===========================")
+    print("Quarterly Hours by Employee, as of "+current_quarter())
+    print("=======================================")
 
     cursor.execute("SELECT * FROM QuarterlyHoursByEmployee;")
     values = cursor.fetchall()
@@ -148,8 +155,8 @@ try:
     print()
     print()
 
-    print("Wines Selling < 20 Units")
-    print("========================")
+    print("Wines Selling < 20 Units during "+current_quarter())
+    print("=====================================")
 
     cursor.execute("CALL UnderperformingWines(20, 0);")
     values = cursor.fetchall()
